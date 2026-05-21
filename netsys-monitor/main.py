@@ -46,7 +46,14 @@ while True:
 
         target = input("Enter target: ")
 
-        scan_ports(target)
+        ports_input = input("Enter ports separated by comma: ")
+
+        ports = []
+
+        for port in ports_input.split(","):
+            ports.append(int(port.strip()))
+
+        scan_ports(target, ports)
 
     elif choice == "3":
 

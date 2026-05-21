@@ -1,44 +1,36 @@
 import socket
+import threading
 
 from utils.logger import write_log
 from utils.colors import GREEN, RED, RESET
 
-def scan_ports(target):
+def scan_single_port(target, port):
+    scanner = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    scanner.settimeout(1)
 
-    ports = [22, 80, 443, 3306, 8080]
+    result = scanner.connect_ex((target, port))
 
-    results = []
+    if result == 0:
+        message = f"PORT_SCAN | {target}:{port} | OPEN"
+        print(f"{GREEN}{message}{RESET}")
+    else:
+        message = f"PORT_SCAN | {target}:{port} | CLOSED"
+        print(f"{RED}{message}{RESET}")
 
-    try:
+    write_log(message)
+    scanner.close()
 
-        for port in ports:
+def scan_ports(target, ports):
+    threads = []
 
-            scanner = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    for port in ports:
+        thread = threading.Thread(
+            target=scan_single_port,
+            args=(target, port)
+        )
 
-            scanner.settimeout(1)
+        threads.append(thread)
+        thread.start()
 
-            result = scanner.connect_ex((target, port))
-
-            if result == 0:
-
-                message = f"PORT_SCAN | {target}:{port} | OPEN"
-
-                print(f"{GREEN}{message}{RESET}")
-
-            else:
-
-                message = f"PORT_SCAN | {target}:{port} | CLOSED"
-
-                print(f"{RED}{message}{RESET}")
-
-            write_log(message)
-
-            results.append(message)
-
-            scanner.close()
-
-    except Exception as error:
-
-        print(f"Error: {error}")
-
-    return results
+    for thread in threads:
+        thread.join()
