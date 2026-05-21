@@ -1,5 +1,7 @@
 import socket
+
 from utils.logger import write_log
+from utils.colors import GREEN, RED, RESET
 
 def scan_ports(target):
 
@@ -7,24 +9,36 @@ def scan_ports(target):
 
     results = []
 
-    for port in ports:
+    try:
 
-        scanner = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        for port in ports:
 
-        scanner.settimeout(1)
+            scanner = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        result = scanner.connect_ex((target, port))
+            scanner.settimeout(1)
 
-        if result == 0:
-            message = f"PORT_SCAN | {target}:{port} | OPEN"
+            result = scanner.connect_ex((target, port))
 
-        else:
-            message = f"PORT_SCAN | {target}:{port} | CLOSED"
+            if result == 0:
 
-        write_log(message)
+                message = f"PORT_SCAN | {target}:{port} | OPEN"
 
-        results.append(message)
+                print(f"{GREEN}{message}{RESET}")
 
-        scanner.close()
+            else:
+
+                message = f"PORT_SCAN | {target}:{port} | CLOSED"
+
+                print(f"{RED}{message}{RESET}")
+
+            write_log(message)
+
+            results.append(message)
+
+            scanner.close()
+
+    except Exception as error:
+
+        print(f"Error: {error}")
 
     return results

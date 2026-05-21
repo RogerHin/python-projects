@@ -1,14 +1,38 @@
+import os
+
 from network.ping import ping_host
 from network.scanner import scan_ports
 from system.system_info import get_system_info
 
+from utils.colors import CYAN, YELLOW, RESET
+
+def clear_screen():
+
+    os.system("clear")
+
+def banner():
+
+    print(f"""{CYAN}
+
+███╗   ██╗███████╗████████╗███████╗██╗   ██╗███████╗
+████╗  ██║██╔════╝╚══██╔══╝██╔════╝╚██╗ ██╔╝██╔════╝
+██╔██╗ ██║█████╗     ██║   ███████╗ ╚████╔╝ ███████╗
+██║╚██╗██║██╔══╝     ██║   ╚════██║  ╚██╔╝  ╚════██║
+██║ ╚████║███████╗   ██║   ███████║   ██║   ███████║
+╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝
+
+{RESET}""")
+
 while True:
 
-    print("\n==== NETSYS MONITOR ====")
-    print("1. Ping Host")
-    print("2. Scan Ports")
-    print("3. Show System Info")
-    print("4. Exit")
+    clear_screen()
+
+    banner()
+
+    print(f"{YELLOW}1.{RESET} Ping Host")
+    print(f"{YELLOW}2.{RESET} Scan Ports")
+    print(f"{YELLOW}3.{RESET} Show System Info")
+    print(f"{YELLOW}4.{RESET} Exit")
 
     choice = input("\nChoose option: ")
 
@@ -16,18 +40,13 @@ while True:
 
         host = input("Enter host: ")
 
-        result = ping_host(host)
-
-        print(result)
+        ping_host(host)
 
     elif choice == "2":
 
         target = input("Enter target: ")
 
-        results = scan_ports(target)
-
-        for result in results:
-            print(result)
+        scan_ports(target)
 
     elif choice == "3":
 
@@ -43,4 +62,7 @@ while True:
         break
 
     else:
+
         print("Invalid option")
+
+    input("\nPress Enter to continue...")
